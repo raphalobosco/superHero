@@ -5,6 +5,8 @@
     export let data = [];
     export let query = "";
 
+    export let selectedHero = "";
+
     async function handleClick(e) {
         data = [];
         data = await fetchHeroes(e);
@@ -12,6 +14,8 @@
         query = "";
         return data;
     }
+
+    function selected() {}
 
     async function onKeyPress(e) {
         if (e.charCode === 13) {
@@ -41,7 +45,7 @@
         <div class="heroes">
             {#if heroes}
                 {#each heroes as hero}
-                    <Cards {hero} />
+                    <Cards {hero} heroDetails />
                 {/each}
             {:else}
                 <p>Something wrong. try again</p>
