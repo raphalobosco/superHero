@@ -1,64 +1,60 @@
 <script>
-    let query = "";
-    let heroes = [];
+    import { heroes, fetchHeroes } from "../stores/Store";
+    import Cards from "../components/Cards.svelte";
 
-    const fetchHeroes = async () => {
-        heroes = [];
+    export let data = [];
+    export let query = "";
 
-        const res = await fetch(
-            `https://superheroapi.com/api/910406413624867/search/${query}`
-        );
+    async function handleClick(e) {
+        data = [];
+        data = await fetchHeroes(e);
+        console.log(data);
+        query = "";
+        return data;
+    }
 
-        if (res.ok) {
-            const data = await res.json();
-            heroes = data.results;
-            console.log(heroes);
-            return heroes;
-        } else {
-            throw new Error("Something wrong. Try again");
+    async function onKeyPress(e) {
+        if (e.charCode === 13) {
+            data = [];
+            data = await fetchHeroes(query);
+            query = "";
+            return data;
         }
-    };
-
-    const onKeyPress = (e) => {
-        if (e.charCode === 13) fetchHeroes();
-    };
-
-    const handleClick = () => {
-        promise = fetchHeroes();
-    };
+    }
 </script>
 
-<div class="grid">
-    <input
-        type="text"
-        bind:value={query}
-        placeholder="Search for heroes and villains"
-        on:submit={fetchHeroes}
-        on:keypress={onKeyPress}
-        preventdefault
-    />
-    <button type="submit" on:click={handleClick} preventdefault>Search</button>
-</div>
-<hr />
+<main class="container">
+    <div class="grid">
+        <input
+            type="text"
+            bind:value={query}
+            placeholder="Search for heroes and villains"
+            on:keypress={onKeyPress}
+            preventdefault
+        />
+        <button type="submit" on:click={handleClick(query)} preventdefault
+            >Search</button
+        >
+    </div>
 
-<div class="heroes">
-    {#if heroes}
-        {#each heroes as hero}
-            <div class="hero-card">
-                <div class="gradient" />
-                <div class="hero-info">
-                    <p>{hero.name}</p>
-                    <small>{hero.biography.publisher}</small>
-                </div>
-                <img src={hero.image.url} alt={hero.name} />
-            </div>
-        {/each}
-    {:else}
-        <p>Something wrong. try again</p>
+    {#if data.length > 0}
+        <div class="heroes">
+            {#if heroes}
+                {#each heroes as hero}
+                    <Cards {hero} />
+                {/each}
+            {:else}
+                <p>Something wrong. try again</p>
+            {/if}
+        </div>
     {/if}
-</div>
+</main>
 
-<style lang="scss">
+<style lang="scss" global>
+    .container {
+        margin: auto;
+        max-width: 1190px;
+    }
     .grid {
         display: flex;
         input {
