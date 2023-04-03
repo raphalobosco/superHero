@@ -1,16 +1,8 @@
 <script>
     export let hero;
-    export let heroDetails;
-
-    const saveHero = (heroName) => {
-        heroDetails = { heroName };
-        console.log(heroDetails);
-        return heroDetails;
-    };
 </script>
 
 <div class="hero-card">
-    <button on:click={({ heroName }) => saveHero(hero.name)}>save</button>
     <div class="gradient" />
     <div class="hero-info">
         <p>{hero.name}</p>

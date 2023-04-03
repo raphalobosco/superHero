@@ -1,28 +1,18 @@
 <script>
-    import { heroes, fetchHeroes } from "../stores/Store";
+    import { fetchHeroes } from "../stores/Store";
     import Cards from "../components/Cards.svelte";
 
-    export let data = [];
+    export let heroes = [];
     export let query = "";
 
-    export let selectedHero = "";
-
-    async function handleClick(e) {
-        data = [];
-        data = await fetchHeroes(e);
-        console.log(data);
+    async function handleClick() {
+        heroes = await fetchHeroes(query);
         query = "";
-        return data;
     }
-
-    function selected() {}
 
     async function onKeyPress(e) {
         if (e.charCode === 13) {
-            data = [];
-            data = await fetchHeroes(query);
-            query = "";
-            return data;
+            heroes = await fetchHeroes(query);
         }
     }
 </script>
@@ -34,23 +24,21 @@
             bind:value={query}
             placeholder="Search for heroes and villains"
             on:keypress={onKeyPress}
-            preventdefault
         />
-        <button type="submit" on:click={handleClick(query)} preventdefault
-            >Search</button
-        >
+
+        <button type="submit" on:click={handleClick}>Search</button>
     </div>
 
-    {#if data.length > 0}
+    {#if heroes}
         <div class="heroes">
-            {#if heroes}
-                {#each heroes as hero}
-                    <Cards {hero} heroDetails />
-                {/each}
-            {:else}
-                <p>Something wrong. try again</p>
-            {/if}
+            {#each heroes as hero}
+                <a type="button" href="/battle/{hero.id}">
+                    <Cards {hero} />
+                </a>
+            {/each}
         </div>
+    {:else}
+        <p>Something wrong. try again</p>
     {/if}
 </main>
 
